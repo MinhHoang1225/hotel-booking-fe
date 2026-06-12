@@ -231,7 +231,7 @@ export function HotelDetailPage() {
             Đánh giá từ khách hàng
           </h2>
           {reviews.length === 0 ? (
-            <p className="text-sm text-slate-500">No reviews yet.</p>
+            <p className="text-sm text-slate-500">Chưa có đánh giá nào.</p>
           ) : (
             reviews.map((review) => (
               <Card

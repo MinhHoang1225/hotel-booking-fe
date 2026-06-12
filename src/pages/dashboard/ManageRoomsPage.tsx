@@ -1,5 +1,14 @@
-import { BedDouble, Building2, Edit2, ImagePlus, Trash2 } from "lucide-react";
+import {
+  BedDouble,
+  Building2,
+  Edit2,
+  ImagePlus,
+  Trash2,
+  Scale,
+  X,
+} from "lucide-react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { myHotels, listHotelRooms } from "../../services/hotels";
 import { createRoom, deleteRoom, updateRoom } from "../../services/rooms";
@@ -9,6 +18,7 @@ import { Input } from "../../components/ui/Input";
 import { Select } from "../../components/ui/Select";
 import { formatMoney } from "../../utils/money";
 import toast from "react-hot-toast";
+import { useCompareStore } from "../../store/compareStore";
 
 const COMMON_AMENITIES = [
   "Wifi miễn phí",
@@ -32,6 +42,9 @@ export function ManageRoomsPage() {
   const [loading, setLoading] = useState(false);
   const [roomImages, setRoomImages] = useState<string[]>([]);
   const [editingRoomId, setEditingRoomId] = useState<string | null>(null);
+
+  const navigate = useNavigate();
+  const { compareList, toggleCompare, clearCompare } = useCompareStore();
 
   const { register, handleSubmit, reset, setValue, watch } = useForm();
 
@@ -106,7 +119,7 @@ export function ManageRoomsPage() {
     if (!confirm("Bạn có chắc chắn muốn xóa phòng này?")) return;
     try {
       await deleteRoom(roomId);
-      setRooms(rooms.filter((r) => r.id !== roomId)); 
+      setRooms(rooms.filter((r) => r.id !== roomId));
       toast.success("Xóa phòng thành công!");
     } catch (error: any) {
       toast.error(error.message || "Lỗi khi xóa phòng");
@@ -355,20 +368,20 @@ export function ManageRoomsPage() {
                           </p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-3 mt-5 pt-4 border-t border-slate-100">
+                      <div className="flex items-center gap-2 mt-5 pt-4 border-t border-slate-100 flex-wrap">
                         <Button
                           variant="outline"
-                          className="flex-1 rounded-xl text-slate-700"
+                          className="flex-1 rounded-xl text-slate-700 px-2"
                           onClick={() => handleEdit(room)}
                         >
-                          <Edit2 className="w-4 h-4 mr-2" /> Chỉnh sửa
+                          <Edit2 className="w-4 h-4 mr-1" /> Sửa
                         </Button>
                         <Button
                           variant="ghost"
-                          className="flex-1 text-red-600 bg-red-50 hover:bg-red-100 rounded-xl"
+                          className="flex-1 text-red-600 bg-red-50 hover:bg-red-100 rounded-xl px-2"
                           onClick={() => handleDelete(room.id)}
                         >
-                          <Trash2 className="w-4 h-4 mr-2" /> Xóa phòng
+                          <Trash2 className="w-4 h-4 mr-1" /> Xóa
                         </Button>
                       </div>
                     </div>
@@ -390,6 +403,7 @@ export function ManageRoomsPage() {
           )}
         </div>
       </div>
+
     </div>
   );
 }

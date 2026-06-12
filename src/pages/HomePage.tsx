@@ -3,10 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { listHotels } from "../services/hotels";
 import type { Hotel } from "../types/api";
 import { HotelCard } from "../components/common/HotelCard";
+import { Star, Quote } from "lucide-react";
+import { getTopReviews, type TopReview } from "../services/reviews";
 
 export function HomePage() {
   const [hotels, setHotels] = useState<Hotel[]>([]);
   const [loading, setLoading] = useState(true);
+  const [testimonials, setTestimonials] = useState<TopReview[]>([]);
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useState({
     q: "",
@@ -26,7 +29,17 @@ export function HomePage() {
   };
 
   useEffect(() => {
-    fetchHotels(); 
+    fetchHotels();
+
+    async function fetchTopReviews() {
+      try {
+        const data = await getTopReviews();
+        setTestimonials(data);
+      } catch (error) {
+        console.error("Lỗi khi tải đánh giá nổi bật:", error);
+      }
+    }
+    fetchTopReviews();
   }, []);
 
   const handleSearch = (e: React.FormEvent) => {
@@ -36,7 +49,7 @@ export function HomePage() {
       Object.entries(searchParams).filter(([_, value]) => value !== ""),
     );
     const queryString = new URLSearchParams(cleanedParams as any).toString();
-    navigate(`/hotels?${queryString}`); 
+    navigate(`/hotels?${queryString}`);
   };
 
   return (
@@ -119,6 +132,62 @@ export function HomePage() {
           </div>
         )}
       </main>
+
+      {testimonials.length > 0 && (
+        <section className="bg-slate-50 py-20">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-slate-900">
+                Khách hàng nói gì về chúng tôi
+              </h2>
+              <p className="text-slate-500 mt-2 max-w-2xl mx-auto">
+                Hàng ngàn du khách đã trải nghiệm và hài lòng với dịch vụ đặt
+                phòng của Velora.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+              {testimonials.map((testimonial) => (
+                <div
+                  key={testimonial.id}
+                  className="bg-white p-8 rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 relative"
+                >
+                  <Quote className="absolute top-6 right-6 w-10 h-10 text-slate-100 rotate-180" />
+                  <div className="flex gap-1 mb-6">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className="w-5 h-5 fill-amber-400 text-amber-400"
+                      />
+                    ))}
+                  </div>
+                  <p className="text-slate-700 mb-8 relative z-10 italic leading-relaxed">
+                    "{testimonial.comment}"
+                  </p>
+                  <div className="flex items-center gap-4">
+                    <img
+                      src={
+                        testimonial.user.avatarUrl ||
+                        `https://ui-avatars.com/api/?name=${testimonial.user.fullName}&background=random`
+                      }
+                      alt={testimonial.user.fullName}
+                      className="w-12 h-12 rounded-full object-cover shadow-sm"
+                    />
+                    <div>
+                      <h4 className="font-bold text-slate-900">
+                        {testimonial.user.fullName}
+                      </h4>
+                      <p className="text-sm text-slate-500 line-clamp-1">
+                        Đã nghỉ tại {testimonial.hotel.name}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 }

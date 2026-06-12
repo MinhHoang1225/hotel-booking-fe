@@ -7,7 +7,14 @@ import { useNotificationStore } from "../../store/notificationStore";
 export function Navbar() {
   const { user, logout } = useAuthStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const { notifications, unreadCount, fetchNotifications, markAsRead, connectSocket, disconnectSocket } = useNotificationStore();
+  const {
+    notifications,
+    unreadCount,
+    fetchNotifications,
+    markAsRead,
+    connectSocket,
+    disconnectSocket,
+  } = useNotificationStore();
 
   useEffect(() => {
     if (user) {
@@ -23,12 +30,11 @@ export function Navbar() {
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold text-xl">
-            H
-          </div>
-          <span className="text-xl font-bold text-foreground tracking-tight">
-            Booking<span className="text-primary">System</span>
-          </span>
+          <img
+            src="https://res.cloudinary.com/deriibors/image/upload/v1780455440/ChatGPT_Image_09_57_02_3_thg_6_2026_q8mnj4.png"
+            alt="Velora Logo"
+            className="w-24 h-24 object-contain rounded-lg"
+          />
         </Link>
 
         {/* Main Menu Links */}
@@ -39,7 +45,6 @@ export function Navbar() {
           >
             Khách sạn
           </Link>
-
         </nav>
 
         {/* Navigation & Auth */}
@@ -67,15 +72,31 @@ export function Navbar() {
                     </div>
                     <div className="max-h-[400px] overflow-y-auto">
                       {notifications.length === 0 ? (
-                        <div className="p-6 text-center text-sm text-slate-500">Chưa có thông báo nào.</div>
+                        <div className="p-6 text-center text-sm text-slate-500">
+                          Chưa có thông báo nào.
+                        </div>
                       ) : (
                         notifications.map((notif) => (
-                          <div key={notif.id} onClick={() => !notif.isRead && markAsRead(notif.id)} className={`p-4 border-b border-slate-50 cursor-pointer hover:bg-slate-50 transition-colors ${!notif.isRead ? "bg-blue-50/30" : ""}`}>
+                          <div
+                            key={notif.id}
+                            onClick={() =>
+                              !notif.isRead && markAsRead(notif.id)
+                            }
+                            className={`p-4 border-b border-slate-50 cursor-pointer hover:bg-slate-50 transition-colors ${!notif.isRead ? "bg-blue-50/30" : ""}`}
+                          >
                             <div className="flex justify-between items-start mb-1">
-                              <p className={`text-sm ${!notif.isRead ? "font-bold text-slate-900" : "font-medium text-slate-700"}`}>{notif.title}</p>
-                              {!notif.isRead && <span className="w-2 h-2 rounded-full bg-primary mt-1.5 shrink-0"></span>}
+                              <p
+                                className={`text-sm ${!notif.isRead ? "font-bold text-slate-900" : "font-medium text-slate-700"}`}
+                              >
+                                {notif.title}
+                              </p>
+                              {!notif.isRead && (
+                                <span className="w-2 h-2 rounded-full bg-primary mt-1.5 shrink-0"></span>
+                              )}
                             </div>
-                            <p className="text-xs text-slate-500 line-clamp-2">{notif.message}</p>
+                            <p className="text-xs text-slate-500 line-clamp-2">
+                              {notif.message}
+                            </p>
                           </div>
                         ))
                       )}
