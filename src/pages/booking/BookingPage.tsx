@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ShieldCheck, User, Mail, Phone, Info } from "lucide-react";
+import { ShieldCheck, User, Mail, Phone } from "lucide-react";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 import { createBooking } from "../../services/bookings";
@@ -24,7 +24,6 @@ export function BookingPage() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
-  // Local state cho thông tin người đặt (Có thể chỉnh sửa để in hóa đơn)
   const [guestName, setGuestName] = useState("");
   const [guestEmail, setGuestEmail] = useState("");
   const [guestPhone, setGuestPhone] = useState("");
@@ -42,13 +41,12 @@ export function BookingPage() {
       .catch(() => toast.error("Lỗi tải thông tin phòng"))
       .finally(() => setLoading(false));
 
-    // Khởi tạo giá trị mặc định từ Profile người dùng
     if (user) {
       setGuestName(user.fullName || "");
       setGuestEmail(user.email || "");
       setGuestPhone((user as any).phone || "");
     }
-  }, [roomId, navigate]);
+  }, [roomId, navigate, user]);
 
   if (loading) {
     return (
@@ -66,7 +64,6 @@ export function BookingPage() {
     );
   }
 
-  // --- TÍNH TOÁN NGÀY THÁNG VÀ GIÁ TIỀN ---
   const checkInDate = new Date(checkIn);
   const checkOutDate = new Date(checkOut);
   const nights = Math.max(
@@ -93,7 +90,7 @@ export function BookingPage() {
         checkIn: checkIn,
         checkOut: checkOut,
         guests: Number(guests),
-        guestName, // Truyền thêm để sau này Backend có thể lấy in ra hóa đơn
+        guestName,
         guestEmail,
         guestPhone,
       });
@@ -106,33 +103,24 @@ export function BookingPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto py-12 px-4">
-      <h1 className="text-3xl font-bold text-slate-900 mb-8">
+    // Thay h-[calc(100vh-4rem)] bằng min-h-screen để trang giãn theo nội dung thay vì ép layout cố định chiều cao
+    <div className="max-w-6xl mx-auto py-6 px-4 min-h-screen">
+      <h1 className="text-2xl font-bold text-slate-900 mb-6">
         Kiểm tra & Xác nhận Đặt phòng
       </h1>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         {/* LƯỚI TRÁI: THÔNG TIN KHÁCH HÀNG & NÚT ĐẶT */}
-        <div className="lg:col-span-2 space-y-8">
-          {/* Guest Information */}
-          <div className="bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm">
-            <h2 className="text-xl font-bold text-slate-900 mb-6 border-b border-slate-100 pb-4 flex items-center gap-2">
-              <ShieldCheck className="w-6 h-6 text-primary" /> Thông tin người
-              đặt phòng
+        <div className="lg:col-span-2 flex flex-col gap-6">
+          {/* Guest Information - Bỏ flex-1 và overflow-y-auto để ôm sát nội dung input */}
+          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+            <h2 className="text-lg font-bold text-slate-900 mb-4 border-b border-slate-100 pb-3 flex items-center gap-2">
+              <ShieldCheck className="w-5 h-5 text-primary" /> Thông tin người đặt phòng
             </h2>
 
-            <div className="mb-6 flex items-start gap-3 bg-blue-50/50 p-4 rounded-2xl border border-blue-100/50 text-sm text-blue-800">
-              <Info className="w-5 h-5 shrink-0 text-blue-500 mt-0.5" />
-              <p>
-                Thông tin bên dưới được sử dụng để liên hệ và in hóa đơn thanh
-                toán. Bạn có thể thay đổi tùy ý mà <b>không làm ảnh hưởng</b>{" "}
-                đến hồ sơ tài khoản gốc của bạn.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-1.5">
+                <label className="block text-sm font-medium text-slate-700 mb-1.5 flex items-center gap-1.5">
                   <User className="w-4 h-4 text-slate-400" /> Họ và tên{" "}
                   <span className="text-red-500">*</span>
                 </label>
@@ -140,12 +128,12 @@ export function BookingPage() {
                   value={guestName}
                   onChange={(e) => setGuestName(e.target.value)}
                   placeholder="VD: Nguyen Van A"
-                  className="bg-white border-slate-200 focus:ring-2 focus:ring-primary/20 transition-all"
+                  className="bg-white border-slate-200 focus:ring-2 focus:ring-primary/20 transition-all h-11"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-1.5">
-                  <Mail className="w-4 h-4 text-slate-400" /> Email nhận hóa đơn{" "}
+                <label className="block text-sm font-medium text-slate-700 mb-1.5 flex items-center gap-1.5">
+                  <Mail className="w-4 h-4 text-slate-400" /> Email{" "}
                   <span className="text-red-500">*</span>
                 </label>
                 <Input
@@ -153,11 +141,11 @@ export function BookingPage() {
                   value={guestEmail}
                   onChange={(e) => setGuestEmail(e.target.value)}
                   placeholder="email@example.com"
-                  className="bg-white border-slate-200 focus:ring-2 focus:ring-primary/20 transition-all"
+                  className="bg-white border-slate-200 focus:ring-2 focus:ring-primary/20 transition-all h-11"
                 />
-              </div>
+              </div> 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-1.5">
+                <label className="block text-sm font-medium text-slate-700 mb-1.5 flex items-center gap-1.5">
                   <Phone className="w-4 h-4 text-slate-400" /> Số điện thoại{" "}
                   <span className="text-red-500">*</span>
                 </label>
@@ -165,112 +153,88 @@ export function BookingPage() {
                   value={guestPhone}
                   onChange={(e) => setGuestPhone(e.target.value)}
                   placeholder="Nhập số điện thoại liên hệ"
-                  className="bg-white border-slate-200 focus:ring-2 focus:ring-primary/20 transition-all"
+                  className="bg-white border-slate-200 focus:ring-2 focus:ring-primary/20 transition-all h-11"
                 />
               </div>
             </div>
           </div>
 
           {/* Box Nút đặt phòng */}
-          <div className="bg-gradient-to-r from-slate-50 to-white p-6 rounded-3xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-sm">
-            <p className="text-sm text-slate-700">
-              Bằng việc bấm xác nhận, bạn đồng ý với các Điều khoản & Chính sách
-              đặt phòng của chúng tôi.
+          <div className="bg-gradient-to-r from-slate-50 to-white p-5 rounded-2xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+            <p className="text-xs text-slate-600 flex-1">
+              Bằng việc bấm xác nhận, bạn đồng ý với các Điều khoản & Chính sách đặt phòng của chúng tôi.
             </p>
             <Button
               onClick={submit}
               disabled={submitting}
-              className="w-full sm:w-auto px-10 py-3.5 rounded-xl font-bold text-sm shadow-lg hover:shadow-xl transition-all"
+              className="w-full sm:w-auto px-8 py-3 rounded-xl font-bold text-sm shadow-md hover:shadow-lg transition-all"
             >
               {submitting ? "Đang xử lý..." : "Xác nhận & Thanh toán"}
             </Button>
           </div>
         </div>
 
-        {/* LƯỚI PHẢI: CHI TIẾT TỔNG QUAN (READONLY SUMMARY) */}
-        <div className="space-y-6 sticky top-8 h-fit">
-          {/* Hotel Information & Room Information */}
-          <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
-            <h3 className="font-bold text-slate-900 mb-4 border-b border-slate-100 pb-2">
+        {/* LƯỚI PHẢI: CHI TIẾT TỔNG QUAN */}
+        <div className="flex flex-col gap-6">
+          {/* Hotel Information & Room Information - Bỏ flex-1 và overflow-y-auto */}
+          <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+            <h3 className="font-bold text-slate-900 mb-3 border-b border-slate-100 pb-2 text-base">
               Thông tin lưu trú
             </h3>
-            <img
-              src={
-                (room as any).hotel?.images?.[0] ||
-                room.images?.[0] ||
-                "https://via.placeholder.com/400"
-              }
-              alt="Hotel"
-              className="w-full h-40 object-cover rounded-2xl mb-5 shadow-sm"
-            />
-
-            <div className="space-y-3 mb-6 text-sm">
-              <p className="flex justify-between">
-                <span className="text-slate-500">Khách sạn:</span>
-                <span className="font-semibold text-slate-900 text-right">
+            <div className="flex gap-4 mb-4">
+              <img
+                src={
+                  (room as any).hotel?.images?.[0] ||
+                  room.images?.[0] ||
+                  "https://via.placeholder.com/400"
+                }
+                alt="Hotel"
+                className="w-24 h-24 object-cover rounded-xl shadow-sm shrink-0"
+              />
+              <div className="space-y-1.5 text-sm flex-1">
+                <p className="font-semibold text-slate-900 line-clamp-1">
                   {(room as any).hotel?.name || "Velora Hotel"}
-                </span>
-              </p>
-              <p className="flex justify-between">
-                <span className="text-slate-500">Địa chỉ:</span>
-                <span className="font-semibold text-slate-900 text-right max-w-[60%]">
+                </p>
+                <p className="text-slate-500 text-xs line-clamp-2">
                   {(room as any).hotel?.address || "System Address"}
-                </span>
-              </p>
-              <p className="flex items-center justify-between">
-                <span className="text-slate-500">Tên phòng:</span>{" "}
-                <span className="font-semibold text-slate-900">
+                </p>
+                <p className="text-xs font-medium text-primary bg-primary/10 w-fit px-2 py-0.5 rounded mt-1">
                   {room.name}
-                </span>
-              </p>
-              <p className="flex items-center justify-between">
-                <span className="text-slate-500">Loại phòng:</span>{" "}
-                <span className="font-semibold text-slate-900">
-                  {room.capacity >= 4 ? "Phòng Gia đình" : "Phòng Tiêu chuẩn"}
-                </span>
-              </p>
-              <p className="flex items-center justify-between">
-                <span className="text-slate-500">Số khách tối đa:</span>{" "}
-                <span className="font-semibold text-slate-900">
-                  {room.capacity} Người
-                </span>
-              </p>
+                </p>
+              </div>
             </div>
 
-            <div className="space-y-3 text-sm text-slate-600 border-t border-slate-100 pt-5">
-              <p className="flex items-center justify-between">
-                <span className="text-slate-500">Nhận phòng:</span>{" "}
-                <span className="font-bold text-slate-900">
-                  {checkInDate.toLocaleDateString("vi-VN")}
-                </span>
-              </p>
-              <p className="flex items-center justify-between">
-                <span className="text-slate-500">Trả phòng:</span>{" "}
-                <span className="font-bold text-slate-900">
-                  {checkOutDate.toLocaleDateString("vi-VN")}
-                </span>
-              </p>
-              <p className="flex items-center justify-between">
+            <div className="space-y-2 text-sm text-slate-600 border-t border-slate-100 pt-3">
+              <div className="grid grid-cols-2 gap-2 bg-slate-50 p-3 rounded-xl mb-2">
+                <div>
+                  <p className="text-xs text-slate-500 uppercase font-semibold mb-1">Nhận phòng</p>
+                  <p className="font-bold text-slate-900">{checkInDate.toLocaleDateString("vi-VN")}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-500 uppercase font-semibold mb-1">Trả phòng</p>
+                  <p className="font-bold text-slate-900">{checkOutDate.toLocaleDateString("vi-VN")}</p>
+                </div>
+              </div>
+              <p className="flex items-center justify-between px-1">
                 <span className="text-slate-500">Thời gian lưu trú:</span>{" "}
-                <span className="font-semibold text-slate-900">{nights}</span>
+                <span className="font-semibold text-slate-900">{nights} đêm</span>
               </p>
-              <p className="flex items-center justify-between">
+              <p className="flex items-center justify-between px-1">
                 <span className="text-slate-500">Số lượng khách:</span>{" "}
-                <span className="font-semibold text-slate-900">{guests}</span>
+                <span className="font-semibold text-slate-900">{guests} Người</span>
               </p>
             </div>
           </div>
 
           {/* Price Breakdown */}
-          <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden">
-            {/* Decoration line */}
+          <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/50 to-primary"></div>
 
-            <h3 className="font-bold text-slate-900 mb-4 border-b border-slate-100 pb-2">
+            <h3 className="font-bold text-slate-900 mb-3 border-b border-slate-100 pb-2 text-base">
               Chi tiết thanh toán
             </h3>
 
-            <div className="space-y-3 text-sm text-slate-600 mb-4">
+            <div className="space-y-2 text-sm text-slate-600 mb-3">
               <p className="flex items-center justify-between">
                 <span className="text-slate-500">
                   Tiền phòng ({nights} đêm)
@@ -280,26 +244,18 @@ export function BookingPage() {
                 </span>
               </p>
               <p className="flex items-center justify-between">
-                <span className="text-slate-500">Thuế GTGT</span>
+                <span className="text-slate-500">Thuế & Phí dịch vụ</span>
                 <span className="font-semibold text-emerald-600">Bao gồm</span>
-              </p>
-              <p className="flex items-center justify-between">
-                <span className="text-slate-500">Phí dịch vụ</span>
-                <span className="font-semibold text-emerald-600">Bao gồm</span>
-              </p>
-              <p className="flex items-center justify-between">
-                <span className="text-slate-500">Giảm giá</span>
-                <span className="font-semibold text-slate-900">0 đ</span>
               </p>
             </div>
 
-            <div className="h-px border-t border-dashed border-slate-200 my-4" />
+            <div className="h-px border-t border-dashed border-slate-200 my-3" />
 
             <div className="flex items-end justify-between">
               <div>
-                <p className="font-bold text-slate-900 uppercase">Tổng cộng</p>
+                <p className="font-bold text-slate-900 uppercase text-sm">Tổng cộng</p>
               </div>
-              <p className="text-2xl font-black text-primary">
+              <p className="text-xl font-black text-primary">
                 {formatMoney(totalAmount)}
               </p>
             </div>

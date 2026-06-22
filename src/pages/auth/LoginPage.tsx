@@ -114,9 +114,7 @@ export function LoginPage() {
               className="mx-auto mb-4 h-20 w-auto"
             /> */}
 
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-2xl font-bold text-white shadow-lg">
-                V
-              </div>
+
 
               <h2 className="text-3xl font-bold text-slate-900">
                 Chào mừng trở lại

@@ -33,7 +33,7 @@ export function Navbar() {
           <img
             src="https://res.cloudinary.com/deriibors/image/upload/v1780455440/ChatGPT_Image_09_57_02_3_thg_6_2026_q8mnj4.png"
             alt="Velora Logo"
-            className="w-24 h-24 object-contain rounded-lg"
+            className="w-20 h-20 object-contain rounded-lg"
           />
         </Link>
 

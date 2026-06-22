@@ -18,7 +18,6 @@ import { Input } from "../../components/ui/Input";
 import { Select } from "../../components/ui/Select";
 import { formatMoney } from "../../utils/money";
 import toast from "react-hot-toast";
-import { useCompareStore } from "../../store/compareStore";
 
 const COMMON_AMENITIES = [
   "Wifi miễn phí",
@@ -44,7 +43,6 @@ export function ManageRoomsPage() {
   const [editingRoomId, setEditingRoomId] = useState<string | null>(null);
 
   const navigate = useNavigate();
-  const { compareList, toggleCompare, clearCompare } = useCompareStore();
 
   const { register, handleSubmit, reset, setValue, watch } = useForm();
 

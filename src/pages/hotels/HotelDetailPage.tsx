@@ -105,9 +105,9 @@ export function HotelDetailPage() {
             className="h-[450px] w-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
         </div>
-        <Card className="p-8 rounded-3xl border-slate-100 shadow-sm flex flex-col justify-center">
+        <Card className="p-4 rounded-3xl border-slate-100 shadow-sm flex flex-col justify-center">
           <div className="flex justify-between items-start gap-4">
-            <h1 className="text-4xl font-bold text-slate-900 leading-tight">
+            <h1 className="text-2xl font-bold text-slate-900 leading-tight">
               {hotel.name}
             </h1>
             <button
@@ -123,9 +123,7 @@ export function HotelDetailPage() {
             <MapPin className="h-4 w-4" />
             {hotel.address}
           </p>
-          <p className="mt-4 text-slate-700">
-            {hotel.description || "A comfortable hotel ready for your stay."}
-          </p>
+
           <div className="mt-5 flex items-center gap-4 text-sm">
             <span className="flex items-center gap-1 text-amber-600">
               <Star className="h-4 w-4 fill-amber-500" />
